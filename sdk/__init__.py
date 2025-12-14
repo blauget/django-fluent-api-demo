@@ -1,10 +1,7 @@
 """
 SDK para Invoice System API.
 
-Un SDK moderno y tipado que implementa patrones de diseño de SDKs profesionales
-como OpenAI y AWS SDK v2.
-
-Ejemplo de uso:
+Use exmaples:
     >>> from sdk import InvoiceSystemClient
     >>> client = InvoiceSystemClient()
     >>> client.clients.create(name="Juan", email="juan@example.com")
@@ -22,10 +19,10 @@ from .models import (
 )
 
 __all__ = [
-    # Cliente principal
+    # Main client
     'InvoiceSystemClient',
     
-    # Modelos de respuesta
+    # Response models
     'ClientData',
     'ItemData',
     'InvoiceData',
