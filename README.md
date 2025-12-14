@@ -102,3 +102,61 @@ clients = client.clients.list()
 
 # Get a specific client
 client_data = client.clients.get(new_client['id'])
+
+## Architecture Diagram
+
+Basic diagram with the class structure and relationships:
+
+```mermaid
+classDiagram
+    class InvoiceSystemClient {
+        -base_url: str
+        -session: Session
+        -_clients: ClientsResource
+        -_items: ItemsResource
+        -_invoices: InvoicesResource
+        +__init__(base_url, token)
+        +_request(method, url, **kwargs)
+        +clients: ClientsResource
+        +items: ItemsResource
+        +invoices: InvoicesResource
+    }
+    
+    class BaseResource {
+        #client: InvoiceSystemClient
+        #endpoint_path: str
+        +__init__(client)
+        +_build_url(resource_id)
+        +list(page, page_size, **kwargs)
+        +get(resource_id)
+        +create(data)
+        +update(resource_id, data)
+        +delete(resource_id)
+    }
+    
+    class ClientsResource {
+        +create(name, email)
+        +update(client_id, name, email)
+        +get_by_email(email)
+    }
+    
+    class ItemsResource {
+        +create(name, sku, price)
+        +update(item_id, name, sku, price)
+        +get_by_sku(sku)
+    }
+    
+    class InvoicesResource {
+        +create(client_id, date)
+        +update(invoice_id, client_id, date)
+        +get_by_client(client_id)
+    }
+    
+    InvoiceSystemClient *-- ClientsResource : contains
+    InvoiceSystemClient *-- ItemsResource : contains
+    InvoiceSystemClient *-- InvoicesResource : contains
+    BaseResource <|-- ClientsResource : extends
+    BaseResource <|-- ItemsResource : extends
+    BaseResource <|-- InvoicesResource : extends
+    BaseResource --> InvoiceSystemClient : uses
+```
