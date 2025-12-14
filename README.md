@@ -102,6 +102,7 @@ clients = client.clients.list()
 
 # Get a specific client
 client_data = client.clients.get(new_client['id'])
+```
 
 ## Architecture Diagram
 
