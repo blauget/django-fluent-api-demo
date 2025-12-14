@@ -18,12 +18,6 @@ from .models import (
     ItemData,
     InvoiceData,
     InvoiceItemData,
-    CreateClientRequest,
-    UpdateClientRequest,
-    CreateItemRequest,
-    UpdateItemRequest,
-    CreateInvoiceRequest,
-    UpdateInvoiceRequest,
     PaginatedResponse,
 )
 
@@ -31,17 +25,11 @@ __all__ = [
     # Cliente principal
     'InvoiceSystemClient',
     
-    # Modelos
+    # Modelos de respuesta
     'ClientData',
     'ItemData',
     'InvoiceData',
     'InvoiceItemData',
-    'CreateClientRequest',
-    'UpdateClientRequest',
-    'CreateItemRequest',
-    'UpdateItemRequest',
-    'CreateInvoiceRequest',
-    'UpdateInvoiceRequest',
     'PaginatedResponse',
 ]
 
