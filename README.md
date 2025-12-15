@@ -1,15 +1,90 @@
 # Django Fluent API Demo
 
-A modern and typed SDK for REST APIs, implementing some interesting design patterns.
+> This repo shows how to turn a raw REST API into a fluent, typed, and discoverable SDK
+> similar to what you get with OpenAI or AWS client libraries.
+
+---
+
+## 🔴 Before vs 🟢 After: Developer Experience
+
+### 🔴 Before: Consuming a typical REST API
+
+```python
+import requests
+
+BASE_URL = "http://127.0.0.1:8000/api/v1/"
+TOKEN = "your-token"
+
+response = requests.post(
+    f"{BASE_URL}/clients/",
+    headers={"Authorization": f"Bearer {TOKEN}"},
+    json={
+        "name": "Juan Pérez",
+        "email": "juan@example.com"
+    }
+)
+
+if response.status_code != 201:
+    raise Exception(response.json())
+
+client_data = response.json()
+
+# Then later...
+response = requests.get(
+    f"{BASE_URL}/clients/{client_data['id']}/",
+    headers={"Authorization": f"Bearer {TOKEN}"}
+)
+
+client = response.json()
+```
+
+---
+
+### 🟢 After: Using a fluent and typed SDK
+
+```python
+from sdk import InvoiceSystemClient
+
+client = InvoiceSystemClient(
+    base_url="http://127.0.0.1:8000/api/v1/",
+    token="your-token"
+)
+
+new_client = client.clients.create(
+    name="Juan Pérez",
+    email="juan@example.com"
+)
+
+client_data = client.clients.get(new_client["id"])
+```
+
+**What improves:**
+
+* ✅ IDE autocompletion and discoverability
+* ✅ Strong typing for inputs and outputs
+* ✅ No URLs, headers or HTTP details in business code
+* ✅ Clear, resource-oriented API
+* ✅ The SDK *is* the documentation
+
+---
 
 ## Objective
 
-This project try to demonstrates how to build an SDK that significantly improves **Developer Experience (DX)** when consuming a REST API. The devolper will interact with typed objects and a fluent API.
+Demonstrate how a well-designed SDK can dramatically improve **Developer Experience (DX)**
+when consuming a REST API, using strong typing, resource-oriented design, and a fluent interface.
+
+This project is intentionally simple and educational, focusing on SDK ergonomics rather than API complexity.
+
+---
 
 ## Architecture and Implemented Patterns
 
+The patterns below are the foundation that enable the "After" experience shown above.
+
 ### 1. **Client Library Pattern**
-The centralized client (`InvoiceSystemClient`) acts as a single entry point, managing configuration, authentication, and HTTP session.
+
+A centralized client (`InvoiceSystemClient`) acts as a single entry point, managing configuration,
+authentication, and the HTTP session.
 
 ```python
 client = InvoiceSystemClient(
@@ -18,11 +93,17 @@ client = InvoiceSystemClient(
 )
 ```
 
+---
+
 ### 2. **Resource-Oriented Design (ROD)**
-Each API resource (clients, items, invoices) is an independent class with own methods. This allow:
-- **Discoverability**: The IDE automatically suggests available resources
-- **Extensibility**: Easy to add resource-specific methods
-- **Organization**: Clean and well-structured code
+
+Each API resource (clients, items, invoices) is represented by its own class with clear, explicit methods.
+
+This enables:
+
+* **Discoverability**: IDEs suggest available resources and methods
+* **Extensibility**: Resource-specific logic lives in the right place
+* **Organization**: A clean and predictable structure
 
 ```python
 client.clients.create(name="Juan", email="juan@example.com")
@@ -30,27 +111,36 @@ client.items.list()
 client.invoices.get(1)
 ```
 
+---
+
 ### 3. **Fluent / Discoverable API**
-The API is self-documented with Python type system. IDE autocompletion guides the developer:
+
+The SDK is designed to be self-documented through Python’s type system.
+As developers type, the IDE guides them through valid operations.
 
 ```python
 # The IDE automatically suggests:
-client.clients.create(  # Autocompletion shows: name: str, email: str
+client.clients.create(  # name: str, email: str
 ```
 
+---
+
 ### 4. **Strong Typing + Schemas**
-- Complete **Type Hints** on all methods
-- **TypedDict** for data models
-- 
+
+* Complete **type hints** on all public methods
+* **TypedDict** models for API responses
+* Clear separation between domain concepts
 
 ```python
-from sdk import ClientData, InvoiceData
+from sdk import ClientData
 
 client_data: ClientData = client.clients.create(
     name="Juan",
     email="juan@example.com"
 )
 ```
+
+---
 
 ## Project Structure
 
@@ -63,7 +153,7 @@ client_data: ClientData = client.clients.create(
 │       ├── views/         # DRF ViewSets
 │       └── urls.py        # API routes
 │
-├── sdk/                    # Client SDK
+├── sdk/                   # Client SDK
 │   ├── __init__.py        # Main exports
 │   ├── client.py          # Main client and resources
 │   └── models.py          # Typed models (TypedDict)
@@ -71,6 +161,8 @@ client_data: ClientData = client.clients.create(
 ├── usage_demo.py          # Usage examples
 └── requirements.txt       # Dependencies
 ```
+
+---
 
 ## SDK Usage
 
@@ -85,36 +177,33 @@ pip install -r requirements.txt
 ```python
 from sdk import InvoiceSystemClient
 
-# Initialize client
 client = InvoiceSystemClient(
     base_url='http://127.0.0.1:8000/api/v1/',
     token='optional-token'
 )
 
-# Create a client
 new_client = client.clients.create(
     name="Juan Pérez",
     email="juan@example.com"
 )
 
-# List clients
 clients = client.clients.list()
 
-# Get a specific client
 client_data = client.clients.get(new_client['id'])
 ```
 
-## Architecture Diagram
+---
 
+## TODO / Next Steps
 
-## TODO
+* **Robust error handling**: Custom exceptions (`NotFoundError`, `ValidationError`, etc.)
+* **Typed request models**: Separate models for Create / Update operations
+* **Async / await support**: Async SDK variant using `httpx`
+* **Retries and timeouts**: Safe defaults inspired by production-grade SDKs
 
-- **Robust error handling**: Implement custom exceptions (`NotFoundError`, `ValidationError`, etc.)
-- **Typed request models**: Add separate models for Create/Update requests (`CreateClientRequest`, `UpdateClientRequest`).
-- **Async/await support**: Asynchronous version of the SDK for better performance
+---
 
-
-## Basic diagram with the class structure and relationships:
+## Class Structure Diagram
 
 ```mermaid
 classDiagram
@@ -134,8 +223,6 @@ classDiagram
     class BaseResource {
         #client: InvoiceSystemClient
         #endpoint_path: str
-        +__init__(client)
-        +_build_url(resource_id)
         +list(page, page_size, **kwargs)
         +get(resource_id)
         +create(data)
@@ -164,8 +251,7 @@ classDiagram
     InvoiceSystemClient *-- ClientsResource : contains
     InvoiceSystemClient *-- ItemsResource : contains
     InvoiceSystemClient *-- InvoicesResource : contains
-    BaseResource <|-- ClientsResource : extends
-    BaseResource <|-- ItemsResource : extends
-    BaseResource <|-- InvoicesResource : extends
-    BaseResource --> InvoiceSystemClient : uses
+    BaseResource <|-- ClientsResource
+    BaseResource <|-- ItemsResource
+    BaseResource <|-- InvoicesResource
 ```
