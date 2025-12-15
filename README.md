@@ -106,7 +106,15 @@ client_data = client.clients.get(new_client['id'])
 
 ## Architecture Diagram
 
-Basic diagram with the class structure and relationships:
+
+## TODO
+
+- **Robust error handling**: Implement custom exceptions (`NotFoundError`, `ValidationError`, etc.)
+- **Typed request models**: Add separate models for Create/Update requests (`CreateClientRequest`, `UpdateClientRequest`).
+- **Async/await support**: Asynchronous version of the SDK for better performance
+
+
+## Basic diagram with the class structure and relationships:
 
 ```mermaid
 classDiagram
