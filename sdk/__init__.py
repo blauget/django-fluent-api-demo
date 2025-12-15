@@ -1,7 +1,7 @@
 """
-SDK para Invoice System API.
+SDK for Invoice System API.
 
-Use exmaples:
+Usage examples:
     >>> from sdk import InvoiceSystemClient
     >>> client = InvoiceSystemClient()
     >>> client.clients.create(name="Juan", email="juan@example.com")

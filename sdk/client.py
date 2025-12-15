@@ -47,7 +47,7 @@ class BaseResource:
             resource_id: Optional ID of the specific resource
             
         Returns:
-            Builted URL
+            Built URL
         """
         path = f"{self.endpoint_path}/"
         if resource_id:
@@ -102,7 +102,7 @@ class BaseResource:
             data: Data of the resource to create
             
         Returns:
-            Datos del recurso creado
+            The created resource data
             
         Raises:
             ValidationError: If the data is invalid
@@ -378,7 +378,7 @@ class InvoicesResource(BaseResource):
 
 
 # ============================================================================
-# CLIENTE PRINCIPAL
+# MAIN CLIENT
 # ============================================================================
 
 class InvoiceSystemClient:
@@ -405,8 +405,8 @@ class InvoiceSystemClient:
         Initialize the client.
         
         Args:
-            base_url: URL base de la API
-            token: Token de autenticación (opcional)
+            base_url: Base URL of the API
+            token: Authentication token (optional)
         """
         self.base_url = base_url if base_url.endswith('/') else f"{base_url}/"
         self.session = requests.Session()
